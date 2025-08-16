@@ -1,24 +1,44 @@
 'use client'
 
-import { Paperclip, Send, Sparkles } from "lucide-react"
+import { CirclePause, Paperclip, Send, Sparkles } from "lucide-react"
 import { Button } from "./ui/button"
 import { useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 
 
 export interface ChatInputProps {
+  loading?: boolean
+  streaming?: boolean
   placeholder?: string
+  onSubmit?: (value?: string) => void
+  onStop?: () => void
 }
 
 export function ChatInput(props: ChatInputProps) {
+  const { placeholder, loading, streaming, onSubmit, onStop } = props
 
   const [value, setValue] = useState('')
 
-  const { placeholder } = props
+  const disabled = !value.trim()
+
+  const handleSubmit = () => {
+    onSubmit?.(value)
+    setValue('')
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
 
   return (
     <div className="w-full border rounded-lg">
-      <textarea placeholder={placeholder} className="w-full px-4 py-3 resize-none outline-none"
+      <textarea
+        placeholder={placeholder}
+        className="w-full px-4 py-3 resize-none outline-none"
+        onKeyDown={handleKeyDown}
         value={value}
         onChange={(e) => {
           setValue(e.target.value)
@@ -28,7 +48,7 @@ export function ChatInput(props: ChatInputProps) {
         <div>
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="ghost" size="sm" >
+              <Button variant="ghost" size="sm">
                 <Paperclip />
               </Button>
             </TooltipTrigger>
@@ -38,7 +58,7 @@ export function ChatInput(props: ChatInputProps) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="ghost" size="sm" >
+              <Button variant="ghost" size="sm">
                 <Sparkles />
               </Button>
             </TooltipTrigger>
@@ -47,10 +67,17 @@ export function ChatInput(props: ChatInputProps) {
             </TooltipContent>
           </Tooltip>
         </div>
-        <Button variant="secondary" size="sm" disabled={!value.trim()}>
-          <Send />
-        </Button>
+        {streaming || loading ? (
+          <Button variant={loading ? 'secondary' : 'destructive'} size="sm" onClick={onStop} disabled={loading}>
+            <CirclePause />
+            Stop
+          </Button>
+        ) : (
+          <Button variant={disabled ? 'secondary' : 'default'} size="sm" disabled={disabled} onClick={handleSubmit} >
+            <Send />
+          </Button>
+        )}
       </div>
-    </div>
+    </div >
   )
 }
