@@ -8,8 +8,9 @@ import { useState, useRef } from "react";
 
 
 export interface Message {
-  role: 'user' | 'assistant';
-  content: string;
+  role: 'user' | 'assistant' | 'tool';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content: any
 }
 
 export function ChatContainer() {
@@ -22,6 +23,26 @@ export function ChatContainer() {
     {
       role: 'assistant',
       content: '你好！😊 很高兴见到你～有什么我可以帮你的吗？'
+    },
+    {
+      role: 'tool',
+      content: {
+        args: { location: 'sdsd' },
+        name: 'get_weather1',
+        id: 'call_1_9be8c634-2f6b-48b1-8291-90c65f819519',
+        type: 'tool_call',
+        return: { a: 1 }
+      }
+    },
+    {
+      role: 'tool',
+      content: {
+        name: 'get_weather2',
+        args: {},
+        id: 'call_1_9be8c634-2f6b-48b1-8291-90c65f819519',
+        type: 'tool_call',
+        return: { a: 1 }
+      }
     }
   ]);
   const [isLoading, setIsLoading] = useState(false)
@@ -81,14 +102,34 @@ export function ChatContainer() {
 
             try {
               const parsed = JSON.parse(data);
-              if (parsed.content) {
-                assistantMessage += parsed.content;
+              console.log('parsed', parsed)
+              if (parsed.type === 'message') {
+                assistantMessage += parsed.data;
                 setMessages(prev => {
                   const newMessages = [...prev];
                   if (newMessages[newMessages.length - 1].role === 'assistant') {
                     newMessages[newMessages.length - 1].content = assistantMessage;
+                  } else {
+                    newMessages.push({
+                      role: 'assistant',
+                      content: assistantMessage
+                    })
                   }
                   return newMessages;
+                });
+              } else if (parsed.type === 'tool') {
+                setMessages(prev => {
+                  const newMessages = [...prev];
+                  const matchIndex = newMessages.findLastIndex(item => item.content.id === parsed.data.id)
+                  if (matchIndex > -1) {
+                    newMessages[matchIndex].content = parsed.data;
+                  } else {
+                    newMessages.push({
+                      role: 'tool',
+                      content: parsed.data
+                    })
+                  }
+                  return newMessages
                 });
               }
             } catch (e) {

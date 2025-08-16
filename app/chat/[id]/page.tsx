@@ -33,7 +33,7 @@ export default async function ChatPage(props: {
             <ChatContainer />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel>
+          <ResizablePanel defaultSize={70}>
             <div className='border rounded-sm h-full bg-white'>
               2
             </div>

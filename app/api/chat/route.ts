@@ -1,4 +1,6 @@
-import { ChatDeepSeek } from '@langchain/deepseek';
+import { agent } from '@/core/graph';
+import { BaseMessageChunk, isAIMessageChunk, MessageContent } from '@langchain/core/messages';
+import { ToolCall } from '@langchain/core/messages/tool';
 import { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -9,22 +11,40 @@ export async function POST(req: NextRequest) {
       return new Response('Message is required', { status: 400 });
     }
 
-    const model = new ChatDeepSeek({
-      apiKey: process.env.DEEPSEEK_API_KEY,
-      model: 'deepseek-chat',
-      streaming: true,
+    const stream = await agent.stream({ messages: [{ role: 'user', content: message }] }, {
+      streamMode: 'messages',
     });
-
-    const stream = await model.stream([{ role: 'user', content: message }]);
 
     const encoder = new TextEncoder();
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of stream) {
-            const content = chunk.content;
-            if (content) {
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+          let toolMessage: ToolCall & { return?: MessageContent } | undefined, toolArgs = ''
+          for await (const item of stream) {
+            const message = item[0] as BaseMessageChunk
+            if (isAIMessageChunk(message) && message.tool_calls?.length) {
+              toolMessage = message.tool_calls[0]
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'tool', data: toolMessage })}\n\n`));
+            }
+            if (isAIMessageChunk(message) && message.tool_call_chunks?.length) {
+              toolArgs += message.tool_call_chunks[0].args
+              try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const args: Record<string, any> = JSON.parse(toolArgs)
+                if (toolMessage) {
+                  toolMessage.args = args
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'tool', data: toolMessage })}\n\n`));
+                }
+              } catch {
+              }
+            } else {
+              if (message.getType() === 'tool' && toolMessage) {
+
+                toolMessage.return = message.content
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'tool', data: toolMessage })}\n\n`));
+              } else {
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'message', data: message.content })}\n\n`));
+              }
             }
           }
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
