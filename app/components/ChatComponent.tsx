@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
 
 interface Message {
   role: 'user' | 'assistant';
@@ -107,11 +108,10 @@ export default function ChatComponent() {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                message.role === 'user'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-800'
-              }`}
+              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.role === 'user'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-200 text-gray-800'
+                }`}
             >
               <p className="whitespace-pre-wrap">{message.content}</p>
             </div>
@@ -122,15 +122,15 @@ export default function ChatComponent() {
             <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg">
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
-      
+
       <div className="border-t bg-gray-50 px-4 py-4">
         <div className="flex space-x-4">
           <input
@@ -142,13 +142,14 @@ export default function ChatComponent() {
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           />
-          <button
+          {/* <button
             onClick={sendMessage}
-            disabled={isLoading || !input.trim()}
+           
             className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             发送
-          </button>
+          </button> */}
+          <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>发送</Button>
         </div>
       </div>
     </div>
