@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from "react";
-import { Message } from "./ChatComponent"
+import { Message } from "./chat-container";
 
 export interface ChatMessagesProps {
   messages: Message[]
