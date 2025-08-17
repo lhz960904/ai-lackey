@@ -1,5 +1,5 @@
-import { expect, test, describe } from 'vitest'
-import { isNormalMessage, isToolMessage, convertMessageStream } from './messages'
+import { expect, test, describe, vi } from 'vitest'
+import { isNormalMessage, isToolMessage, convertMessageStream, parseMessageStream } from './messages'
 import { AIMessageChunk, BaseMessageChunk, ToolMessageChunk } from '@langchain/core/messages'
 import { IterableReadableStream } from '@langchain/core/utils/stream'
 
@@ -207,4 +207,116 @@ describe('convertMessageStream', () => {
     expect(output).toContain('data: [DONE]');
     expect(output).not.toContain('"invalid": json');
   });
+})
+
+
+describe('parseMessageStream', () => {
+
+  test('should return null if stream is null', async () => {
+    const callbacks = {
+      onStart: vi.fn(),
+      onMessage: vi.fn(),
+      onEnd: vi.fn()
+    };
+    const reader = await parseMessageStream(null, callbacks)
+    expect(reader).toBeNull();
+    expect(callbacks.onStart).not.toHaveBeenCalled();
+    expect(callbacks.onMessage).not.toHaveBeenCalled();
+    expect(callbacks.onEnd).not.toHaveBeenCalled();
+  })
+
+  test('should handle start, message, and end callbacks', async () => {
+    const data1 = { type: 'message', data: 'Hello' };
+    const data2 = { type: 'tool', data: { name: 'search', args: { query: 'test' } } };
+    const mockStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data1)}\n\n`));
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data2)}\n\n`));
+        controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
+        controller.close();
+      }
+    });
+    const callbacks = {
+      onStart: vi.fn(),
+      onMessage: vi.fn(),
+      onEnd: vi.fn()
+    };
+    await parseMessageStream(mockStream, callbacks);
+    expect(callbacks.onStart).toHaveBeenCalled();
+    expect(callbacks.onStart).toBeCalledTimes(1);
+    expect(callbacks.onMessage).toHaveBeenCalledTimes(2);
+    expect(callbacks.onMessage).toHaveBeenCalledWith(data1);
+    expect(callbacks.onMessage).toHaveBeenCalledWith(data2);
+    expect(callbacks.onEnd).toHaveBeenCalled();
+    expect(callbacks.onEnd).toBeCalledTimes(1);
+  })
+
+  test('should not invoke end callbacks if stream not done', async () => {
+    const data1 = { type: 'message', data: 'Hello' };
+    const mockStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data1)}\n\n`));
+        controller.close();
+      }
+    });
+    const callbacks = {
+      onStart: vi.fn(),
+      onMessage: vi.fn(),
+      onEnd: vi.fn()
+    };
+    await parseMessageStream(mockStream, callbacks);
+    expect(callbacks.onStart).toHaveBeenCalled();
+    expect(callbacks.onStart).toBeCalledTimes(1);
+    expect(callbacks.onMessage).toHaveBeenCalledTimes(1);
+    expect(callbacks.onMessage).toHaveBeenCalledWith(data1);
+    expect(callbacks.onEnd).not.toHaveBeenCalled();
+  })
+
+  test('should not invoke message callbacks if stream has not data', async () => {
+    const mockStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
+        controller.close();
+      }
+    });
+    const callbacks = {
+      onStart: vi.fn(),
+      onMessage: vi.fn(),
+      onEnd: vi.fn()
+    };
+    await parseMessageStream(mockStream, callbacks);
+    expect(callbacks.onStart).toHaveBeenCalled();
+    expect(callbacks.onStart).toBeCalledTimes(1);
+    expect(callbacks.onMessage).not.toHaveBeenCalled();
+    expect(callbacks.onEnd).toHaveBeenCalled();
+    expect(callbacks.onEnd).toBeCalledTimes(1);
+  })
+
+  test('should not continue invoke callbacks if stream abort', async () => {
+    const data1 = { type: 'message', data: 'Hello' };
+    const data2 = { type: 'tool', data: { name: 'search', args: { query: 'test' } } };
+    const mockStream = new ReadableStream({
+      async start(controller) {
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data1)}\n\n`));
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data2)}\n\n`));
+        controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
+        controller.close();
+      }
+    });
+    let currentReader: ReadableStreamDefaultReader | null = null
+    const callbacks = {
+      onStart: (reader: ReadableStreamDefaultReader) => {
+        currentReader = reader
+        setTimeout(() => currentReader?.cancel(), 50)
+      },
+      onMessage: vi.fn(),
+      onEnd: vi.fn()
+    };
+    await parseMessageStream(mockStream, callbacks);
+    expect(callbacks.onMessage).toHaveBeenCalled();
+    expect(callbacks.onMessage).toBeCalledTimes(1);
+    expect(callbacks.onMessage).toHaveBeenCalledWith(data1);
+    expect(callbacks.onEnd).not.toHaveBeenCalled();
+  })
 })

@@ -23,6 +23,11 @@ export interface NormalMessage {
   content: MessageContent;
 }
 
+export interface ParsedStreamData {
+  type: 'tool' | 'message';
+  data: ToolCallWithReturn | MessageContent;
+}
+
 export type ChatMessage = ToolMessage | NormalMessage
 
 export function isToolMessage(value: ChatMessage): value is ToolMessage {
@@ -57,7 +62,7 @@ export function convertMessageStream(stream: IterableReadableStream<[BaseMessage
               const toolMessage = toolMap.get(lastToolId)
               if (toolMessage) {
                 toolMessage.args = args
-                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'tool', data: toolMessage })}\n\n`));
+                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: MessageRole.Tool, data: toolMessage })}\n\n`));
               }
             } catch {
             }
@@ -84,3 +89,35 @@ export function convertMessageStream(stream: IterableReadableStream<[BaseMessage
 
   return readableStream
 }
+
+
+export async function parseMessageStream(stream: ReadableStream<Uint8Array<ArrayBuffer>> | null, callbacks: { onStart?: (reader: ReadableStreamDefaultReader) => void; onMessage?: (data: ParsedStreamData) => void; onEnd?: () => void }) {
+  const reader = stream?.getReader();
+  if (!stream || !reader) {
+    return null;
+  }
+  callbacks.onStart?.(reader);
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = new TextDecoder().decode(value);
+    const lines = chunk.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+
+        const data = line.slice(6);
+        if (data === '[DONE]') {
+          callbacks.onEnd?.();
+          return;
+        }
+        try {
+          const parsed = JSON.parse(data);
+          callbacks.onMessage?.(parsed);
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+        }
+      }
+    }
+  }
+}
+

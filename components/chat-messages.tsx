@@ -1,33 +1,33 @@
 'use client'
 
 import { useEffect, useRef, useState } from "react";
-import { Message } from "./chat-container";
 import { ChevronDown, ChevronUp, Loader, Wrench } from "lucide-react";
+import { ChatMessage, isToolMessage, MessageRole, NormalMessage, ToolMessage } from "@/lib/messages";
 
 export interface ChatMessagesProps {
-  messages: Message[]
+  messages: ChatMessage[]
   isLoading?: boolean
 }
 
 
-export function BaseMessage({ message }: { message: Message }) {
+export function BaseMessage({ message }: { message: NormalMessage }) {
   return (
     <div
-      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+      className={`flex ${message.role === MessageRole.Human ? 'justify-end' : 'justify-start'}`}
     >
       <div
-        className={`max-w-xs lg:max-w-md rounded-lg ${message.role === 'user'
+        className={`max-w-xs lg:max-w-md rounded-lg ${message.role === MessageRole.Human
           ? 'bg-blue-500 text-white px-4 py-2'
           : ''
           }`}
       >
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        <p className="whitespace-pre-wrap">{String(message.content)}</p>
       </div>
     </div>
   )
 }
 
-export function ToolMessage({ message }: { message: Message }) {
+export function ToolMessageRender({ message }: { message: ToolMessage }) {
   const [expand, setExpand] = useState(false)
 
   return (
@@ -70,8 +70,8 @@ export function ChatMessages(props: ChatMessagesProps) {
   return (
     <div className="flex-1 overflow-y-auto space-y-4">
       {messages.map((message, index) => {
-        if (message.role === 'tool') {
-          return <ToolMessage message={message} key={index} />
+        if (isToolMessage(message)) {
+          return <ToolMessageRender message={message} key={index} />
         } else {
           return <BaseMessage message={message} key={index} />
         }
