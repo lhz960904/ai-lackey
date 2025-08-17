@@ -67,8 +67,6 @@ export function ChatMessages(props: ChatMessagesProps) {
     scrollToBottom();
   }, [messages]);
 
-  console.log('messages', messages)
-
   return (
     <div className="flex-1 overflow-y-auto space-y-4">
       {messages.map((message, index) => {

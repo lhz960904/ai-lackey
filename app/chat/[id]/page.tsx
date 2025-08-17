@@ -1,5 +1,3 @@
-import { ChatInput } from '@/components/chat-input';
-import { AppSidebar } from '@/components/sidebar';
 import { ThemeHandle } from '@/components/theme-handle';
 import Image from 'next/image'
 import Link from 'next/link';
@@ -9,6 +7,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { ChatContainer } from '@/components/chat-container';
+import { RightContainer } from '@/components/right-container';
 
 export default async function ChatPage(props: {
   params: Promise<{ id: string }>
@@ -33,10 +32,8 @@ export default async function ChatPage(props: {
             <ChatContainer />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel defaultSize={70}>
-            <div className='border rounded-sm h-full bg-white'>
-              2
-            </div>
+          <ResizablePanel defaultSize={70} minSize={50}>
+            <RightContainer />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
