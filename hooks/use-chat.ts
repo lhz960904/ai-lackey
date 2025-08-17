@@ -74,7 +74,6 @@ export function useChat(options: UseChatOptions = {}): UseChatReturn {
         },
         onMessage(data: ParsedStreamData) {
           if (data.type === 'message') {
-            console.log('Received message data:', data.data);
             if (typeof data.data !== 'string') return
             assistantMessage += data.data as string;
             setMessages(prev => {

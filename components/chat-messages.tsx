@@ -16,7 +16,7 @@ export function BaseMessage({ message }: { message: NormalMessage }) {
       className={`flex ${message.role === MessageRole.Human ? 'justify-end' : 'justify-start'}`}
     >
       <div
-        className={`max-w-xs lg:max-w-md rounded-lg ${message.role === MessageRole.Human
+        className={`max-w-sm lg:max-w-md rounded-lg ${message.role === MessageRole.Human
           ? 'bg-blue-500 text-white px-4 py-2'
           : ''
           }`}
@@ -31,7 +31,7 @@ export function ToolMessageRender({ message }: { message: ToolMessage }) {
   const [expand, setExpand] = useState(false)
 
   return (
-    <div className="border rounded bg-gray-100 text-gray-500 text-sm duration-300 ease-in transform">
+    <div className="border rounded bg-gray-100 text-gray-500 text-sm duration-300 ease-in transform max-w-sm lg:max-w-md">
       <div className="flex items-center justify-between p-2">
         <div className="flex items-center gap-2">
           {!message.content.return ? <Loader className="animate-spin" size={16} /> : <Wrench size={16} />}
@@ -40,10 +40,12 @@ export function ToolMessageRender({ message }: { message: ToolMessage }) {
         {expand ? <ChevronUp className="cursor-pointer" size={16} onClick={() => setExpand(false)} /> : <ChevronDown className="cursor-pointer" onClick={() => setExpand(true)} size={16} />}
       </div>
       {expand ? (
-        <div className="border-t">
+        <div className="border-t px-2 overflow-auto">
+          <span className="font-bold">input:</span>
           <pre>
-            {JSON.stringify(message.content.args, null, 2)}
+            {JSON.stringify(message.content.args)}
           </pre>
+          <span className="font-bold">output:</span>
           <pre>
             {JSON.stringify(message.content.return, null, 2)}
           </pre>
