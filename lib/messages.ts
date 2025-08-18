@@ -1,7 +1,6 @@
 import { BaseMessage, BaseMessageChunk, isAIMessageChunk, isToolMessageChunk, MessageContent, ToolMessageChunk } from "@langchain/core/messages";
 import { ToolCall } from "@langchain/core/messages/tool";
 import { IterableReadableStream } from "@langchain/core/utils/stream";
-import { appendFileSync } from "fs";
 
 export enum MessageRole {
   AI = 'ai',
