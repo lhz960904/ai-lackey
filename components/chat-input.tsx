@@ -68,7 +68,7 @@ export function ChatInput(props: ChatInputProps) {
           </Tooltip>
         </div>
         {streaming || loading ? (
-          <Button variant={loading ? 'secondary' : 'destructive'} size="sm" onClick={onStop} disabled={loading}>
+          <Button variant={loading ? 'secondary' : 'default'} size="sm" onClick={onStop} disabled={loading}>
             <CirclePause />
             Stop
           </Button>

@@ -28,6 +28,18 @@ dependencies:
   '@radix-ui/react-tooltip':
     specifier: ^1.2.8
     version: 1.2.8(@types/react-dom@19.1.7)(@types/react@19.1.10)(react-dom@19.1.0)(react@19.1.0)
+  '@webcontainer/api':
+    specifier: ^1.6.1
+    version: 1.6.1
+  '@xterm/addon-fit':
+    specifier: ^0.10.0
+    version: 0.10.0(@xterm/xterm@5.5.0)
+  '@xterm/addon-web-links':
+    specifier: ^0.11.0
+    version: 0.11.0(@xterm/xterm@5.5.0)
+  '@xterm/xterm':
+    specifier: ^5.5.0
+    version: 5.5.0
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
@@ -64,6 +76,9 @@ dependencies:
   zod:
     specifier: ^4.0.17
     version: 4.0.17
+  zustand:
+    specifier: ^5.0.8
+    version: 5.0.8(@types/react@19.1.10)(react@19.1.0)
 
 devDependencies:
   '@eslint/eslintrc':
@@ -2398,6 +2413,30 @@ packages:
       loupe: 3.2.0
       tinyrainbow: 2.0.0
     dev: true
+
+  /@webcontainer/api@1.6.1:
+    resolution: {integrity: sha512-2RS2KiIw32BY1Icf6M1DvqSmcon9XICZCDgS29QJb2NmF12ZY2V5Ia+949hMKB3Wno+P/Y8W+sPP59PZeXSELg==}
+    dev: false
+
+  /@xterm/addon-fit@0.10.0(@xterm/xterm@5.5.0):
+    resolution: {integrity: sha512-UFYkDm4HUahf2lnEyHvio51TNGiLK66mqP2JoATy7hRZeXaGMRDr00JiSF7m63vR5WKATF605yEggJKsw0JpMQ==}
+    peerDependencies:
+      '@xterm/xterm': ^5.0.0
+    dependencies:
+      '@xterm/xterm': 5.5.0
+    dev: false
+
+  /@xterm/addon-web-links@0.11.0(@xterm/xterm@5.5.0):
+    resolution: {integrity: sha512-nIHQ38pQI+a5kXnRaTgwqSHnX7KE6+4SVoceompgHL26unAxdfP6IPqUTSYPQgSwM56hsElfoNrrW5V7BUED/Q==}
+    peerDependencies:
+      '@xterm/xterm': ^5.0.0
+    dependencies:
+      '@xterm/xterm': 5.5.0
+    dev: false
+
+  /@xterm/xterm@5.5.0:
+    resolution: {integrity: sha512-hqJHYaQb5OptNunnyAnkHyM8aCjZ1MEIDTQu1iIbbTD/xops91NB5yq1ZK/dC2JDbVWtF23zUtl9JE2NqwT87A==}
+    dev: false
 
   /acorn-jsx@5.3.2(acorn@8.15.0):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -5702,4 +5741,26 @@ packages:
 
   /zod@4.0.17:
     resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
+    dev: false
+
+  /zustand@5.0.8(@types/react@19.1.10)(react@19.1.0):
+    resolution: {integrity: sha512-gyPKpIaxY9XcO2vSMrLbiER7QMAMGOQZVRdJ6Zi782jkbzZygq5GI9nG8g+sMgitRtndwaBSl7uiqC49o1SSiw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+    dependencies:
+      '@types/react': 19.1.10
+      react: 19.1.0
     dev: false

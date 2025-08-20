@@ -7,7 +7,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { ChatContainer } from '@/components/chat-container';
-import { RightContainer } from '@/components/right-container';
+import { Workbench } from '@/components/workbench/workbench';
 
 export default async function ChatPage(props: {
   params: Promise<{ id: string }>
@@ -31,9 +31,9 @@ export default async function ChatPage(props: {
           <ResizablePanel minSize={20} defaultSize={30}>
             <ChatContainer />
           </ResizablePanel>
-          <ResizableHandle />
+          <ResizableHandle className="mx-[2px] h-[94%] mt-[2%] rounded" />
           <ResizablePanel defaultSize={70} minSize={50}>
-            <RightContainer />
+            <Workbench />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
