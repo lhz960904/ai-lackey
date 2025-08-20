@@ -76,10 +76,31 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+
+  /* Terminal Colors */
+  --terminal-color-background: #fff;
+  --terminal-color-foreground: #333333;
+  --terminal-color-selection-background: #00000040;
+  --terminal-color-black: #000000;
+  --terminal-color-red: #cd3131;
+  --terminal-color-green: #00bc00;
+  --terminal-color-yellow: #949800;
+  --terminal-color-blue: #0451a5;
+  --terminal-color-magenta: #bc05bc;
+  --terminal-color-cyan: #0598bc;
+  --terminal-color-white: #555555;
+  --terminal-color-brightBlack: #686868;
+  --terminal-color-brightRed: #cd3131;
+  --terminal-color-brightGreen: #00bc00;
+  --terminal-color-brightYellow: #949800;
+  --terminal-color-brightBlue: #0451a5;
+  --terminal-color-brightMagenta: #bc05bc;
+  --terminal-color-brightCyan: #0598bc;
+  --terminal-color-brightWhite: #a5a5a5;
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
+  --background: #000;
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
@@ -110,6 +131,27 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+
+  /* Terminal Colors */
+  --terminal-color-background: #171717;
+  --terminal-color-foreground: #eff0eb;
+  --terminal-color-selection-background: #97979b33;
+  --terminal-color-black: #000000;
+  --terminal-color-red: #ff5c57;
+  --terminal-color-green: #5af78e;
+  --terminal-color-yellow: #f3f99d;
+  --terminal-color-blue: #57c7ff;
+  --terminal-color-magenta: #ff6ac1;
+  --terminal-color-cyan: #9aedfe;
+  --terminal-color-white: #f1f1f0;
+  --terminal-color-brightBlack: #686868;
+  --terminal-color-brightRed: #ff5c57;
+  --terminal-color-brightGreen: #5af78e;
+  --terminal-color-brightYellow: #f3f99d;
+  --terminal-color-brightBlue: #57c7ff;
+  --terminal-color-brightMagenta: #ff6ac1;
+  --terminal-color-brightCyan: #9aedfe;
+  --terminal-color-brightWhite: #f1f1f0;
 }
 
 @layer base {
@@ -119,4 +161,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.xterm {
+  padding: 0.5rem;
 }

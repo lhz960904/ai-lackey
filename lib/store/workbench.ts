@@ -12,6 +12,8 @@ export interface PreviewInfo {
 
 interface WorkbenchStoreState {
   previewInfo?: PreviewInfo;
+  isShowTerminal: boolean
+  toggleTerminal: () => void;
 }
 
 
@@ -21,7 +23,8 @@ export class WorkbenchStore {
   #shellProcess: WebContainerProcess | null = null
 
   state = createStore<WorkbenchStoreState>((set) => ({
-
+    isShowTerminal: false,
+    toggleTerminal: () => set((state) => ({ isShowTerminal: !state.isShowTerminal })),
   }))
 
   constructor(webContainer: WebContainer) {
@@ -60,6 +63,10 @@ export class WorkbenchStore {
     if (this.#shellProcess) {
       this.#shellProcess.resize({ cols, rows });
     }
+  }
+
+  toggleTerminal() {
+    this.state.setState({ isShowTerminal: !this.state.getState().isShowTerminal })
   }
 }
 

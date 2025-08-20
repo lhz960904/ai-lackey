@@ -54,3 +54,6 @@ Tool messages include both the tool call and its return value in a `ToolCallWith
 ### Testing
 
 Uses Vitest for testing with coverage reporting. Test files use `.test.ts` extension.
+
+### Package Management
+- Uses `pnpm` as the package manager

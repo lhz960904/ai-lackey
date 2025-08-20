@@ -1,6 +1,6 @@
 'use client';
 
-import { CodeXml, Eye } from "lucide-react";
+import { CodeXml, Eye, SquareTerminal } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import { WorkbenchStore } from "@/lib/store/workbench";
 import { WebContainer } from "@webcontainer/api";
 import { WORK_DIR_NAME } from "@/lib/constant";
 import { files } from "./filts";
+import { Button } from "../ui/button";
 
 
 export function Workbench() {
@@ -29,7 +30,7 @@ export function Workbench() {
   useEffect(() => { init() }, [])
 
   return (
-    <div className='border rounded-sm h-full bg-white'>
+    <div className='border rounded-sm h-full bg-white dark:bg-[#171717]'>
       <Tabs defaultValue="code" className="h-full gap-0">
         <div className="border-b py-2 px-3 flex justify-between items-center">
           <TabsList>
@@ -50,6 +51,11 @@ export function Workbench() {
               </TooltipTrigger>
             </Tooltip>
           </TabsList>
+          <div>
+            <Button variant="ghost" size="sm" onClick={() => workbenchStore?.toggleTerminal()}>
+              <SquareTerminal />
+            </Button>
+          </div>
         </div>
         <div className="h-full relative">
           <TabsContent value="view" className="h-full" forceMount>

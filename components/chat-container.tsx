@@ -10,7 +10,7 @@ export function ChatContainer() {
   const { messages, isLoading, isStreaming, sendMessage, stop } = useChat();
 
   return (
-    <div className='border rounded-sm h-full bg-white relative'>
+    <div className='border rounded-sm h-full bg-white dark:bg-[#171717] relative'>
       <div className="border-b py-2 px-1 flex justify-between items-center">
         <span></span>
         <Button variant="ghost" size="sm">
