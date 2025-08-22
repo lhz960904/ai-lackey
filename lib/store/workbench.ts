@@ -3,6 +3,9 @@ import { Terminal } from "@xterm/xterm";
 import { newShellProcess } from "../shell";
 import { coloredText } from "../terminal";
 import { createStore } from 'zustand'
+import { FileMap, FilesStore } from "./files";
+import { mockFiles } from "./mock";
+import { WORK_DIR } from "../constant";
 
 export interface PreviewInfo {
   port: number;
@@ -10,36 +13,40 @@ export interface PreviewInfo {
   baseUrl: string;
 }
 
-interface WorkbenchStoreState {
+export interface WorkbenchStoreState {
+  files: FileMap;
   previewInfo?: PreviewInfo;
-  isShowTerminal: boolean
-  toggleTerminal: () => void;
+  isShowTerminal: boolean;
+  selectedFile?: string
 }
-
 
 export class WorkbenchStore {
 
   #webContainer: WebContainer;
+  #filesStore: FilesStore;
   #shellProcess: WebContainerProcess | null = null
 
-  state = createStore<WorkbenchStoreState>((set) => ({
+  store = createStore<WorkbenchStoreState>(() => ({
     isShowTerminal: false,
-    toggleTerminal: () => set((state) => ({ isShowTerminal: !state.isShowTerminal })),
+    files: mockFiles,
+    selectedFile: `${WORK_DIR}/index.js`,
+
   }))
 
   constructor(webContainer: WebContainer) {
     this.#webContainer = webContainer;
+    this.#filesStore = new FilesStore(webContainer, this.store)
     this.init()
   }
 
   init() {
     this.#webContainer.on('port', (port, type, url) => {
-      if (type === 'close' && this.state.getState().previewInfo?.port === port) {
-        this.state.setState({ previewInfo: undefined });
+      if (type === 'close' && this.store.getState().previewInfo?.port === port) {
+        this.store.setState({ previewInfo: undefined });
         return;
       }
 
-      this.state.setState({
+      this.store.setState({
         previewInfo: { port, ready: type === 'open', baseUrl: url }
       })
     });
@@ -66,7 +73,11 @@ export class WorkbenchStore {
   }
 
   toggleTerminal() {
-    this.state.setState({ isShowTerminal: !this.state.getState().isShowTerminal })
+    this.store.setState({ isShowTerminal: !this.store.getState().isShowTerminal })
+  }
+
+  onFileSelect(filePath: string) {
+    this.store.setState({ selectedFile: filePath })
   }
 }
 

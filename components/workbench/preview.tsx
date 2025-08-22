@@ -13,7 +13,7 @@ export function Preview({ workbenchStore }: EditorPanelProps) {
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const previewInfo = useStore(workbenchStore.state, (state) => state.previewInfo);
+  const previewInfo = useStore(workbenchStore.store, (state) => state.previewInfo);
 
   return (
     <div>

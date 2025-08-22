@@ -1,0 +1,148 @@
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import type { FileMap } from '@/lib/store/files';
+import { cn } from '@/lib/utils';
+import { WORK_DIR } from '@/lib/constant';
+import { cubicEasingFn } from '@/lib/animation';
+import FileTree from './file-tree';
+import { ChevronRight, FileCode } from 'lucide-react';
+
+const WORK_DIR_REGEX = new RegExp(`^${WORK_DIR.split('/').slice(0, -1).join('/').replaceAll('/', '\\/')}/`);
+
+interface FileBreadcrumbProps {
+  files?: FileMap;
+  pathSegments?: string[];
+  onFileSelect?: (filePath: string) => void;
+}
+
+const contextMenuVariants = {
+  open: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.15,
+      ease: cubicEasingFn,
+    },
+  },
+  close: {
+    y: 6,
+    opacity: 0,
+    transition: {
+      duration: 0.15,
+      ease: cubicEasingFn,
+    },
+  },
+} satisfies Variants;
+
+export const FileBreadcrumb = ({ files, pathSegments = [], onFileSelect }: FileBreadcrumbProps) => {
+
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const contextMenuRef = useRef<HTMLDivElement | null>(null);
+  const segmentRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  const handleSegmentClick = (index: number) => {
+    setActiveIndex((prevIndex) => (prevIndex === index ? null : index));
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        activeIndex !== null &&
+        !contextMenuRef.current?.contains(event.target as Node) &&
+        !segmentRefs.current.some((ref) => ref?.contains(event.target as Node))
+      ) {
+        setActiveIndex(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [activeIndex]);
+
+  if (files === undefined || pathSegments.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="flex">
+      {pathSegments.map((segment, index) => {
+        const isLast = index === pathSegments.length - 1;
+
+        const path = pathSegments.slice(0, index).join('/');
+
+        if (!WORK_DIR_REGEX.test(path)) {
+          return null;
+        }
+
+        const isActive = activeIndex === index;
+
+        return (
+          <div key={index} className="relative flex items-center">
+            <DropdownMenu.Root open={isActive} modal={false}>
+              <DropdownMenu.Trigger asChild>
+                <span
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  ref={(ref: any) => (segmentRefs.current[index] = ref)}
+                  className={cn('flex items-center gap-1.5 cursor-pointer shrink-0 text-sm', {
+                    'hover:text-black': !isActive,
+                    'text-black underline': isActive,
+                    'pr-4': isLast,
+                    'text-gray-500': !isLast
+                  })}
+                  onClick={() => handleSegmentClick(index)}
+                >
+                  {isLast && <FileCode size={16} />}
+                  {segment}
+                </span>
+              </DropdownMenu.Trigger>
+              {index > 0 && !isLast && <ChevronRight size={16} className='text-gray-400' />}
+              <AnimatePresence>
+                {isActive && (
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                      className="z-file-tree-breadcrumb"
+                      asChild
+                      align="start"
+                      side="bottom"
+                      avoidCollisions={false}
+                    >
+                      <motion.div
+                        ref={contextMenuRef}
+                        initial="close"
+                        animate="open"
+                        exit="close"
+                        variants={contextMenuVariants}
+                      >
+                        <div className="rounded-lg overflow-hidden">
+                          <div className="max-h-[50vh] min-w-[300px] overflow-scroll bg-background border shadow-sm rounded-lg">
+                            <FileTree
+                              files={files}
+                              hideRoot
+                              rootFolder={path}
+                              collapsed
+                              allowFolderSelection
+                              selectedFile={`${path}/${segment}`}
+                              onFileSelect={(filePath: string) => {
+                                setActiveIndex(null);
+                                onFileSelect?.(filePath);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                )}
+              </AnimatePresence>
+            </DropdownMenu.Root>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
