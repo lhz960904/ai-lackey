@@ -5,13 +5,13 @@ import { useStore } from "zustand";
 import FileTree from "./file-tree";
 import { CodeEditor } from "../editor";
 import { WORK_DIR } from "@/lib/constant";
-import { getLanguageFromFilePath } from "@/lib/utils";
 import { FileBreadcrumb } from "./file-breadcrumb";
 import { FileDiff, RotateCcw, Save } from "lucide-react";
 import { Button } from "../ui/button";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiffCodeEditor } from "../editor/diff";
+import { getLanguageByFilePath } from "../editor/language-setup";
 interface EditorPanelProps {
   workbenchStore: WorkbenchStore
 }
@@ -88,7 +88,7 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
                 ) : showDiff ? (
                   <DiffCodeEditor original={originalContent} modified={currentFile?.content} />
                 ) : <CodeEditor
-                  language={getLanguageFromFilePath(currentFile?.filePath)}
+                  language={getLanguageByFilePath(currentFile?.filePath)}
                   value={currentFile?.content}
                   onChange={onEditorChange}
                   onSave={onFileSave}

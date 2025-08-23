@@ -150,8 +150,11 @@ export class WorkbenchStore {
     if (!file) {
       return;
     }
+    const previousUnsavedFiles = this.store.getState().unsavedFiles;
+    const nextUnsavedFiles = new Map(previousUnsavedFiles)
+    nextUnsavedFiles.delete(currentFile.filePath);
 
-    this.store.setState({ currentFile: { ...currentFile, content: file.content } });
+    this.store.setState({ currentFile: { ...currentFile, content: file.content }, unsavedFiles: nextUnsavedFiles });
   }
 }
 

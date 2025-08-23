@@ -2,6 +2,8 @@
 
 import { DiffEditor } from "@monaco-editor/react";
 import { useTheme } from 'next-themes'
+import type { editor } from 'monaco-editor'
+import { registerLanguages } from './language-setup'
 
 interface CodeEditorProps {
   language?: string
@@ -10,6 +12,49 @@ interface CodeEditorProps {
   className?: string
   original?: string
   modified?: string
+}
+
+// 动态行号管理函数
+function setupDynamicLineNumbers(diffEditor: editor.IDiffEditor) {
+  const modifiedEditor = diffEditor.getModifiedEditor();
+
+  // 动态调整行号显示的函数
+  const updateLineNumbers = () => {
+    // 检查当前是否为side-by-side模式
+    // 通过检查DOM元素来判断当前渲染模式
+    const diffContainer = diffEditor.getContainerDomNode();
+    const isSideBySide = diffContainer?.querySelector('.monaco-diff-editor.side-by-side') !== null;
+
+    if (isSideBySide) {
+      // side-by-side模式：显示右侧行号
+      modifiedEditor.updateOptions({
+        lineNumbers: 'on',
+      });
+    } else {
+      // inline模式：隐藏行号
+      modifiedEditor.updateOptions({
+        lineNumbers: 'off',
+      });
+    }
+  };
+
+  // 初始调整
+  updateLineNumbers();
+
+  // 监听窗口大小变化，重新调整行号显示
+  const resizeObserver = new ResizeObserver(() => {
+    setTimeout(updateLineNumbers, 100); // 延迟执行以确保DOM更新完成
+  });
+
+  const container = diffEditor.getContainerDomNode();
+  if (container) {
+    resizeObserver.observe(container);
+  }
+
+  // 返回清理函数
+  return () => {
+    resizeObserver.disconnect();
+  };
 }
 
 export function DiffCodeEditor({
@@ -46,37 +91,17 @@ export function DiffCodeEditor({
           fontSize: 14,
           lineHeight: 1.5,
           fontFamily: 'Monaco, Consolas, "Ubuntu Mono", monospace',
+          lineNumbers: 'on',
+          lineNumbersMinChars: 3,
+        }}
+        onMount={(editor) => {
+          // 使用独立的行号管理函数
+          const cleanup = setupDynamicLineNumbers(editor);
+          // 返回清理函数
+          return cleanup;
         }}
         beforeMount={(monaco) => {
-          // 注册前端相关语言
-          monaco.languages.register({ id: 'typescript' })
-          monaco.languages.register({ id: 'javascript' })
-          monaco.languages.register({ id: 'css' })
-          monaco.languages.register({ id: 'scss' })
-          monaco.languages.register({ id: 'less' })
-          monaco.languages.register({ id: 'html' })
-          monaco.languages.register({ id: 'json' })
-          monaco.languages.register({ id: 'markdown' })
-
-          // 为Vue文件添加支持
-          monaco.languages.register({
-            id: 'vue',
-            extensions: ['.vue'],
-            aliases: ['Vue', 'vue']
-          })
-
-          // 为JSX/TSX添加支持
-          monaco.languages.register({
-            id: 'jsx',
-            extensions: ['.jsx'],
-            aliases: ['JSX', 'jsx']
-          })
-
-          monaco.languages.register({
-            id: 'tsx',
-            extensions: ['.tsx'],
-            aliases: ['TSX', 'tsx']
-          })
+          registerLanguages(monaco)
         }}
       />
     </div>

@@ -4,6 +4,7 @@ import { Editor } from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 import { useCallback, useRef } from 'react'
 import type { editor } from 'monaco-editor'
+import { registerLanguages } from './language-setup'
 
 interface CodeEditorProps {
   language?: string
@@ -75,7 +76,6 @@ export function CodeEditor({
           lineNumbers: 'on',
           lineNumbersMinChars: 3,
           renderLineHighlight: 'all',
-          // selectOnLineNumbers: true,
           roundedSelection: false,
           cursorStyle: 'line',
           folding: true,
@@ -101,54 +101,9 @@ export function CodeEditor({
           accessibilitySupport: 'auto'
         }}
         beforeMount={(monaco) => {
-          // 注册前端相关语言
-          monaco.languages.register({ id: 'typescript' })
-          monaco.languages.register({ id: 'javascript' })
-          monaco.languages.register({ id: 'css' })
-          monaco.languages.register({ id: 'scss' })
-          monaco.languages.register({ id: 'less' })
-          monaco.languages.register({ id: 'html' })
-          monaco.languages.register({ id: 'json' })
-          monaco.languages.register({ id: 'markdown' })
-
-          // 为Vue文件添加支持
-          monaco.languages.register({
-            id: 'vue',
-            extensions: ['.vue'],
-            aliases: ['Vue', 'vue']
-          })
-
-          // 为JSX/TSX添加支持
-          monaco.languages.register({
-            id: 'jsx',
-            extensions: ['.jsx'],
-            aliases: ['JSX', 'jsx']
-          })
-
-          monaco.languages.register({
-            id: 'tsx',
-            extensions: ['.tsx'],
-            aliases: ['TSX', 'tsx']
-          })
+          registerLanguages(monaco)
         }}
       />
     </div>
   )
 }
-
-// 导出语言类型常量
-export const SUPPORTED_LANGUAGES = {
-  JAVASCRIPT: 'javascript',
-  TYPESCRIPT: 'typescript',
-  JSX: 'jsx',
-  TSX: 'tsx',
-  CSS: 'css',
-  SCSS: 'scss',
-  LESS: 'less',
-  HTML: 'html',
-  VUE: 'vue',
-  JSON: 'json',
-  MARKDOWN: 'markdown'
-} as const
-
-export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[keyof typeof SUPPORTED_LANGUAGES]
