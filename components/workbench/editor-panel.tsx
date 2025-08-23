@@ -7,21 +7,29 @@ import { CodeEditor } from "../editor";
 import { WORK_DIR } from "@/lib/constant";
 import { getLanguageFromFilePath } from "@/lib/utils";
 import { FileBreadcrumb } from "./file-breadcrumb";
-import { RotateCcw, Save } from "lucide-react";
+import { FileDiff, RotateCcw, Save } from "lucide-react";
 import { Button } from "../ui/button";
-import { useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { DiffCodeEditor } from "../editor/diff";
 interface EditorPanelProps {
   workbenchStore: WorkbenchStore
 }
 
 export function EditorPanel({ workbenchStore }: EditorPanelProps) {
+  const [showDiff, setShowDiff] = useState(false)
 
   const isShowTerminal = useStore(workbenchStore.store, (state) => state.isShowTerminal);
   const files = useStore(workbenchStore.store, (state) => state.files);
   const currentFile = useStore(workbenchStore.store, (state) => state.currentFile);
   const activeFileSegments = currentFile?.filePath.split('/');
   const unsavedFiles = useStore(workbenchStore.store, (state) => state.unsavedFiles);
+
+  const originalContent = useMemo(() => {
+    const file = files[currentFile?.filePath || '']
+    return file?.type === 'file' ? file.content : ''
+  }, [files, currentFile])
+
 
   const onFileSave = useCallback(async () => {
     try {
@@ -40,6 +48,8 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
     workbenchStore.setCurrentFileContent(content);
   }, [workbenchStore]);
 
+  const onFileDiff = () => setShowDiff(prev => !prev)
+
   return (
     <div className="h-full">
       <ResizablePanelGroup direction="vertical">
@@ -50,6 +60,7 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
                 <FileTree
                   files={files}
                   hideRoot
+                  collapsed
                   rootFolder={WORK_DIR}
                   selectedFile={currentFile?.filePath}
                   onFileSelect={(filePath) => workbenchStore.onFileSelect(filePath)}
@@ -65,18 +76,23 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
                 )}
                 {unsavedFiles.has(currentFile?.filePath || '') && (
                   <div>
+                    <Button variant="ghost" onClick={onFileDiff} className={showDiff ? 'text-orange-300' : ''}><FileDiff />Diff</Button>
                     <Button variant="ghost" onClick={onFileSave}><Save />Save</Button>
                     <Button variant="ghost" onClick={onFileReset}><RotateCcw />Reset</Button>
                   </div>
                 )}
               </div>
               <div className="h-[calc(100%-32px)]">
-                <CodeEditor
+                {currentFile?.isBinary ? (
+                  <div className="h-full flex items-center justify-center text-gray-500">File format cannot be displayed.</div>
+                ) : showDiff ? (
+                  <DiffCodeEditor original={originalContent} modified={currentFile?.content} />
+                ) : <CodeEditor
                   language={getLanguageFromFilePath(currentFile?.filePath)}
                   value={currentFile?.content}
                   onChange={onEditorChange}
                   onSave={onFileSave}
-                />
+                />}
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
