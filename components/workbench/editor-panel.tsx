@@ -7,6 +7,10 @@ import { CodeEditor } from "../editor";
 import { WORK_DIR } from "@/lib/constant";
 import { getLanguageFromFilePath } from "@/lib/utils";
 import { FileBreadcrumb } from "./file-breadcrumb";
+import { RotateCcw, Save } from "lucide-react";
+import { Button } from "../ui/button";
+import { useCallback } from "react";
+import { toast } from "sonner";
 interface EditorPanelProps {
   workbenchStore: WorkbenchStore
 }
@@ -15,16 +19,26 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
 
   const isShowTerminal = useStore(workbenchStore.store, (state) => state.isShowTerminal);
   const files = useStore(workbenchStore.store, (state) => state.files);
-  const selectedFile = useStore(workbenchStore.store, (state) => state.selectedFile);
-  const selectedFileCode = useStore(workbenchStore.store, (state) => {
-    if (!state.selectedFile) return ''
-    const file = state.files[state.selectedFile]
-    if (file?.type === 'file') {
-      return file?.content
+  const currentFile = useStore(workbenchStore.store, (state) => state.currentFile);
+  const activeFileSegments = currentFile?.filePath.split('/');
+  const unsavedFiles = useStore(workbenchStore.store, (state) => state.unsavedFiles);
+
+  const onFileSave = useCallback(async () => {
+    try {
+      await workbenchStore.saveCurrentFileContent();
+      toast.success("Save Changes")
+    } catch {
+      toast.success("Failed to update file content")
     }
-    return ''
-  });
-  const activeFileSegments = selectedFile?.split('/');
+  }, [workbenchStore]);
+
+  const onFileReset = useCallback(() => {
+    workbenchStore.resetCurrentFileContent();
+  }, [workbenchStore]);
+
+  const onEditorChange = useCallback((content?: string) => {
+    workbenchStore.setCurrentFileContent(content);
+  }, [workbenchStore]);
 
   return (
     <div className="h-full">
@@ -37,24 +51,31 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
                   files={files}
                   hideRoot
                   rootFolder={WORK_DIR}
-                  selectedFile={selectedFile}
+                  selectedFile={currentFile?.filePath}
                   onFileSelect={(filePath) => workbenchStore.onFileSelect(filePath)}
+                  unsavedFiles={Array.from(unsavedFiles.keys())}
                 />
               </div>
             </ResizablePanel>
             <ResizableHandle className="bg-border! w-px" />
             <ResizablePanel defaultSize={75} minSize={60}>
-              <div className="h-8 border-b flex items-center px-2">
+              <div className="h-8 border-b flex items-center justify-between px-2">
                 {activeFileSegments?.length && (
                   <FileBreadcrumb pathSegments={activeFileSegments} files={files} onFileSelect={(filePath) => workbenchStore.onFileSelect(filePath)} />
+                )}
+                {unsavedFiles.has(currentFile?.filePath || '') && (
+                  <div>
+                    <Button variant="ghost" onClick={onFileSave}><Save />Save</Button>
+                    <Button variant="ghost" onClick={onFileReset}><RotateCcw />Reset</Button>
+                  </div>
                 )}
               </div>
               <div className="h-[calc(100%-32px)]">
                 <CodeEditor
-                  language={getLanguageFromFilePath(selectedFile)}
-                  value={selectedFileCode}
-                // onChange={handleChange}
-                // onSave={handleSave}
+                  language={getLanguageFromFilePath(currentFile?.filePath)}
+                  value={currentFile?.content}
+                  onChange={onEditorChange}
+                  onSave={onFileSave}
                 />
               </div>
             </ResizablePanel>

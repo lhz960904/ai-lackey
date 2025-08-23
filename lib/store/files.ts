@@ -1,8 +1,8 @@
 import type { WebContainer } from '@webcontainer/api';
 // PathWatcherEvent
 import { getEncoding } from 'istextorbinary';
-import { Buffer } from 'node:buffer';
-import * as nodePath from 'node:path';
+import { Buffer } from 'buffer';
+import * as nodePath from 'path';
 // import { bufferWatchEvents } from '@/lib/utils';
 // import { WORK_DIR } from '@/lib/constant';
 import { StoreApi } from 'zustand';
@@ -75,7 +75,7 @@ export class FilesStore {
   }
 
   async saveFile(filePath: string, content: string) {
-    const webContainer = await this.#webContainer;
+    const webContainer = this.#webContainer;
 
     try {
       const relativePath = nodePath.relative(webContainer.workdir, filePath);

@@ -16,7 +16,7 @@ interface Props {
   collapsed?: boolean;
   allowFolderSelection?: boolean;
   hiddenFiles?: Array<string | RegExp>;
-  unsavedFiles?: Set<string>;
+  unsavedFiles?: string[];
   className?: string;
 }
 
@@ -118,7 +118,7 @@ const FileTree = ({
                 key={fileOrFolder.id}
                 selected={selectedFile === fileOrFolder.fullPath}
                 file={fileOrFolder}
-                unsavedChanges={unsavedFiles?.has(fileOrFolder.fullPath)}
+                unsavedChanges={unsavedFiles?.includes(fileOrFolder.fullPath)}
                 onClick={() => {
                   onFileSelect?.(fileOrFolder.fullPath);
                 }}
@@ -197,7 +197,7 @@ function File({ file: { depth, name }, onClick, selected, unsavedChanges = false
         })}
       >
         <div className="flex-1 truncate pr-2">{name}</div>
-        {unsavedChanges && <span className="i-ph:circle-fill scale-68 shrink-0 text-orange-500" />}
+        {unsavedChanges && <span className="w-3 h-3 rounded-full bg-orange-300 scale-68 shrink-0" />}
       </div>
     </NodeButton >
   );

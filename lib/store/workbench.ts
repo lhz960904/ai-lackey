@@ -13,11 +13,18 @@ export interface PreviewInfo {
   baseUrl: string;
 }
 
+export interface CurrentFile {
+  filePath: string
+  content?: string
+  isBinary: boolean;
+}
+
 export interface WorkbenchStoreState {
   files: FileMap;
   previewInfo?: PreviewInfo;
   isShowTerminal: boolean;
-  selectedFile?: string
+  currentFile?: CurrentFile;
+  unsavedFiles: Map<string, string>
 }
 
 export class WorkbenchStore {
@@ -29,8 +36,11 @@ export class WorkbenchStore {
   store = createStore<WorkbenchStoreState>(() => ({
     isShowTerminal: false,
     files: mockFiles,
-    selectedFile: `${WORK_DIR}/index.js`,
-
+    unsavedFiles: new Map(),
+    currentFile: {
+      filePath: `${WORK_DIR}/index.js`,
+      ...mockFiles[`${WORK_DIR}/index.js`]
+    } as CurrentFile,
   }))
 
   constructor(webContainer: WebContainer) {
@@ -77,7 +87,71 @@ export class WorkbenchStore {
   }
 
   onFileSelect(filePath: string) {
-    this.store.setState({ selectedFile: filePath })
+    const file = this.store.getState().files[filePath]
+    const unsavedFiles = this.store.getState().unsavedFiles
+    if (file?.type !== 'file') return
+    const content = unsavedFiles.has(filePath) ? unsavedFiles.get(filePath) : file.content
+    this.store.setState({
+      currentFile: {
+        filePath,
+        content,
+        isBinary: file.isBinary
+      }
+    })
+  }
+
+  setCurrentFileContent(newContent: string = '') {
+    const currentFile = this.store.getState().currentFile
+
+    if (!currentFile) {
+      return;
+    }
+
+    const originalContent = this.#filesStore.getFile(currentFile.filePath)?.content;
+    const unsavedChanges = originalContent !== undefined && originalContent !== newContent;
+
+    const newCurrentFile = { ...currentFile, content: newContent }
+    this.store.setState({ currentFile: newCurrentFile })
+
+    const previousUnsavedFiles = this.store.getState().unsavedFiles;
+    const nextUnsavedFiles = new Map(previousUnsavedFiles)
+
+    if (unsavedChanges) {
+      nextUnsavedFiles.set(currentFile.filePath, newContent)
+    } else {
+      nextUnsavedFiles.delete(currentFile.filePath);
+    }
+
+    this.store.setState({ unsavedFiles: nextUnsavedFiles })
+  }
+
+  async saveCurrentFileContent() {
+    const currentFile = this.store.getState().currentFile
+
+    if (!currentFile) {
+      return;
+    }
+    await this.#filesStore.saveFile(currentFile.filePath, currentFile.content || '');
+    const previousUnsavedFiles = this.store.getState().unsavedFiles;
+    const nextUnsavedFiles = new Map(previousUnsavedFiles)
+    nextUnsavedFiles.delete(currentFile.filePath);
+    this.store.setState({ unsavedFiles: nextUnsavedFiles })
+  }
+
+  resetCurrentFileContent() {
+    const currentFile = this.store.getState().currentFile
+
+    if (!currentFile) {
+      return;
+    }
+    const { filePath } = currentFile;
+    const file = this.#filesStore.getFile(filePath);
+
+    if (!file) {
+      return;
+    }
+
+    this.store.setState({ currentFile: { ...currentFile, content: file.content } });
   }
 }
 
