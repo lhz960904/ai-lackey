@@ -32,6 +32,7 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
 
 
   const onFileSave = useCallback(async () => {
+    setShowDiff(false)
     try {
       await workbenchStore.saveCurrentFileContent();
       toast.success("Save Changes")
@@ -41,6 +42,7 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
   }, [workbenchStore]);
 
   const onFileReset = useCallback(() => {
+    setShowDiff(false)
     workbenchStore.resetCurrentFileContent();
   }, [workbenchStore]);
 
