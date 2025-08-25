@@ -36,7 +36,7 @@ export function Workbench() {
           <TabsList>
             <Tooltip>
               <TooltipTrigger>
-                <TabsTrigger value="view">
+                <TabsTrigger value="view" asChild>
                   <Eye />
                 </TabsTrigger>
               </TooltipTrigger>
@@ -44,7 +44,7 @@ export function Workbench() {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <TabsTrigger value="code">
+                <TabsTrigger value="code" asChild>
                   <CodeXml />
                 </TabsTrigger>
                 <TooltipContent>code</TooltipContent>

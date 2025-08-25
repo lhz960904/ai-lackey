@@ -1,6 +1,5 @@
 import { WorkbenchStore } from "@/lib/store/workbench";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
-import Terminal from "./terminal";
 import { useStore } from "zustand";
 import FileTree from "./file-tree";
 import { CodeEditor } from "../editor";
@@ -12,9 +11,15 @@ import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiffCodeEditor } from "../editor/diff";
 import { getLanguageByFilePath } from "../editor/language-setup";
+import dynamic from "next/dynamic";
 interface EditorPanelProps {
   workbenchStore: WorkbenchStore
 }
+
+const Terminal = dynamic(() => import('./terminal'), {
+  ssr: false,
+});
+
 
 export function EditorPanel({ workbenchStore }: EditorPanelProps) {
   const [showDiff, setShowDiff] = useState(false)

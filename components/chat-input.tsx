@@ -48,7 +48,7 @@ export function ChatInput(props: ChatInputProps) {
         <div>
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" asChild>
                 <Paperclip />
               </Button>
             </TooltipTrigger>
@@ -58,7 +58,7 @@ export function ChatInput(props: ChatInputProps) {
           </Tooltip>
           <Tooltip>
             <TooltipTrigger>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" asChild>
                 <Sparkles />
               </Button>
             </TooltipTrigger>
