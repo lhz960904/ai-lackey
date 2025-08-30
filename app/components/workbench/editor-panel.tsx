@@ -1,9 +1,9 @@
-import { WorkbenchStore } from "@/lib/store/workbench";
+import { WorkbenchStore } from "@/app/lib/store/workbench";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { useStore } from "zustand";
 import FileTree from "./file-tree";
 import { CodeEditor } from "../editor";
-import { WORK_DIR } from "@/lib/constant";
+import { WORK_DIR } from "@/app/lib/constant";
 import { FileBreadcrumb } from "./file-breadcrumb";
 import { FileDiff, RotateCcw, Save } from "lucide-react";
 import { Button } from "../ui/button";

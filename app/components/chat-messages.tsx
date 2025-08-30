@@ -22,7 +22,7 @@ export function BaseMessage({ message }: { message: UIMessage }) {
           : ''
           }`}
       >
-        <p className="whitespace-pre-wrap">
+        <div className="whitespace-pre-wrap">
           {message.parts.map((part, i) => {
             switch (part.type) {
               case 'text':
@@ -32,7 +32,7 @@ export function BaseMessage({ message }: { message: UIMessage }) {
               }
             }
           })}
-        </p>
+        </div>
       </div>
     </div>
   )

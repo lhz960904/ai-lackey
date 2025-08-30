@@ -1,6 +1,6 @@
-import { ChatInput } from '@/components/chat-input';
-import { AppSidebar } from '@/components/sidebar';
-import { ThemeHandle } from '@/components/theme-handle';
+import { ChatInput } from '@/app/components/chat-input';
+import { AppSidebar } from '@/app/components/sidebar';
+import { ThemeHandle } from '@/app/components/theme-handle';
 import Image from 'next/image'
 import Link from 'next/link';
 

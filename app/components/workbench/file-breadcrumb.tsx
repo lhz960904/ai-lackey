@@ -1,10 +1,10 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import type { FileMap } from '@/lib/store/files';
-import { cn } from '@/lib/utils';
-import { WORK_DIR } from '@/lib/constant';
-import { cubicEasingFn } from '@/lib/animation';
+import type { FileMap } from '@/app/lib/store/files';
+import { cn } from '@/app/lib/utils';
+import { WORK_DIR } from '@/app/lib/constant';
+import { cubicEasingFn } from '@/app/lib/animation';
 import FileTree from './file-tree';
 import { ChevronRight, FileCode } from 'lucide-react';
 

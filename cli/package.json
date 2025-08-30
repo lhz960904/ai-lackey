@@ -1,0 +1,38 @@
+{
+  "name": "@ai-lackey/cli",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ai-lackey": "bin/index.js"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "cac": "^6.7.14"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "/bin",
+    "/dist",
+    "/img"
+  ],
+  "keywords": [],
+  "license": "MIT",
+  "author": "",
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { WorkbenchStore } from "@/lib/store/workbench";
+import { WorkbenchStore } from "@/app/lib/store/workbench";
 import { useRef } from "react";
 import { useStore } from "zustand";
 

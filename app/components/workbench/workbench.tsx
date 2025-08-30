@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import '@xterm/xterm/css/xterm.css';
 import { Preview } from "./preview";
 import { EditorPanel } from "./editor-panel";
-import { WorkbenchStore } from "@/lib/store/workbench";
+import { WorkbenchStore } from "@/app/lib/store/workbench";
 import { WebContainer } from "@webcontainer/api";
-import { WORK_DIR_NAME } from "@/lib/constant";
+import { WORK_DIR_NAME } from "@/app/lib/constant";
 import { files } from "./filts";
 import { Button } from "../ui/button";
 

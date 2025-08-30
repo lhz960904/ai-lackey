@@ -1,5 +1,5 @@
 
-import { Command, CommandItem, } from "@/components/ui/command"
+import { Command, CommandItem, } from "@/app/components/ui/command"
 import { Earth, List } from "lucide-react"
 import Link from "next/link"
 import { Button } from "./ui/button"

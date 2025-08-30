@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { FileMap } from '@/lib/store/files';
-import { cn } from '@/lib/utils';
+import type { FileMap } from '@/app/lib/store/files';
+import { cn } from '@/app/lib/utils';
 import { FileCode, FolderIcon, FolderOpen } from 'lucide-react'
 
 

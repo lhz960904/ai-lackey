@@ -1,10 +1,7 @@
 import type { WebContainer } from '@webcontainer/api';
-// PathWatcherEvent
 import { getEncoding } from 'istextorbinary';
 import { Buffer } from 'buffer';
 import * as nodePath from 'path';
-// import { bufferWatchEvents } from '@/lib/utils';
-// import { WORK_DIR } from '@/lib/constant';
 import { StoreApi } from 'zustand';
 import { WorkbenchStoreState } from './workbench';
 

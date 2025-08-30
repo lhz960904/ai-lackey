@@ -1,13 +1,13 @@
-import { ThemeHandle } from '@/components/theme-handle';
+import { ThemeHandle } from '@/app/components/theme-handle';
 import Image from 'next/image'
 import Link from 'next/link';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { ChatContainer } from '@/components/chat-container';
-import { Workbench } from '@/components/workbench/workbench';
+} from "@/app/components/ui/resizable"
+import { ChatContainer } from '@/app/components/chat-container';
+import { Workbench } from '@/app/components/workbench/workbench';
 
 export default async function ChatPage(props: {
   params: Promise<{ id: string }>
