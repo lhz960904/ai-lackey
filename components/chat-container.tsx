@@ -4,10 +4,10 @@ import { ClockFading } from "lucide-react";
 import { ChatInput } from "./chat-input";
 import { Button } from "./ui/button";
 import { ChatMessages } from "./chat-messages";
-import { useChat } from "@/hooks/use-chat";
+import { useChat } from '@ai-sdk/react';
 
 export function ChatContainer() {
-  const { messages, isLoading, isStreaming, sendMessage, stop } = useChat();
+  const { status, messages, sendMessage, stop } = useChat();
 
   return (
     <div className='border rounded-sm h-full bg-white dark:bg-[#171717] relative'>
@@ -18,10 +18,10 @@ export function ChatContainer() {
         </Button>
       </div>
       <div className="p-3 h-[calc(100%-200px)] overflow-y-auto">
-        <ChatMessages messages={messages} isLoading={isLoading} />
+        <ChatMessages messages={messages} isLoading={status === 'submitted'} />
       </div>
       <div className="p-3 absolute w-full bottom-0">
-        <ChatInput loading={isLoading} streaming={isStreaming} onSubmit={sendMessage} onStop={stop} />
+        <ChatInput loading={status === 'submitted'} streaming={status === 'streaming'} onSubmit={(input) => sendMessage({ text: input || '' })} onStop={stop} />
       </div>
     </div>
   )
