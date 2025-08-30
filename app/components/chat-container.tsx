@@ -5,6 +5,8 @@ import { ChatInput } from "./chat-input";
 import { Button } from "./ui/button";
 import { ChatMessages } from "./chat-messages";
 import { useChat } from '@ai-sdk/react';
+import { SUPPORT_MODELS } from "@/core/models";
+import { SelectModel } from "./select-model";
 
 export function ChatContainer() {
   const { status, messages, sendMessage, stop } = useChat();
@@ -12,7 +14,9 @@ export function ChatContainer() {
   return (
     <div className='border rounded-sm h-full bg-white dark:bg-[#171717] relative'>
       <div className="border-b py-2 px-1 flex justify-between items-center">
-        <span></span>
+        <span>
+          <SelectModel />
+        </span>
         <Button variant="ghost" size="sm">
           <ClockFading size={18} />
         </Button>

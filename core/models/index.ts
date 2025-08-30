@@ -15,10 +15,8 @@ const anthropic = createAnthropic({
 
 
 export const supportModels: Record<string, LanguageModelV2> = {
-  'deepseek-chat': deepseek("deepseek-chat"),
-  'deepseek-reasoner': deepseek("deepseek-reasoner"),
-  'claude-sonnet-4-20250514': anthropic('claude-sonnet-4-20250514'),
-  'claude-sonnet-4-20250514-thinking': anthropic('claude-sonnet-4-20250514-thinking')
+  'deepseek-v3.1': deepseek("deepseek-chat"),
+  'claude-4-sonnet': anthropic('claude-sonnet-4-20250514'),
 }
 
 export function getModel(key: string): LanguageModelV2 | undefined {
