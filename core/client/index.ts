@@ -21,8 +21,9 @@ export function sendMessage(messages: UIMessage[]) {
     messages: msgs,
     tools: {
       getWeather
-    }
+    },
   });
   return result
 }
+
 

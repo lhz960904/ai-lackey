@@ -4,9 +4,15 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/anthropic':
+        specifier: ^2.0.9
+        version: 2.0.9(zod@4.0.17)
       '@ai-sdk/deepseek':
         specifier: ^1.0.13
         version: 1.0.13(zod@4.0.17)
+      '@ai-sdk/provider':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@ai-sdk/react':
         specifier: ^2.0.28
         version: 2.0.28(react@19.1.0)(zod@4.0.17)
@@ -146,6 +152,17 @@ importers:
         version: 8.5.0(typescript@5.9.2)
 
 packages:
+
+  /@ai-sdk/anthropic@2.0.9(zod@4.0.17):
+    resolution: {integrity: sha512-1kQgL2A3PeqfEcHHmqy4NxRc8rbgLS71bHBuvDFfDz3VAAyndkilPMCLNDSP2mJVGAej2EMWJ1sShRAxzn70jA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.7(zod@4.0.17)
+      zod: 4.0.17
+    dev: false
 
   /@ai-sdk/deepseek@1.0.13(zod@4.0.17):
     resolution: {integrity: sha512-t8hIsCH0BPtm+JmCjZDI1GDZRkV8+bXQR/njznG14jwLeqLE+fi495Ns2yVmJbOySJ4Yj5m8bTr4KAT89A9eZQ==}

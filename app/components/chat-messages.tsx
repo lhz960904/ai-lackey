@@ -42,7 +42,7 @@ export function ToolMessageRender({ part }: { part: ToolUIPart<UITools> }) {
   const [expand, setExpand] = useState(false)
 
   return (
-    <div className="border rounded bg-gray-100 text-gray-500 text-sm duration-300 ease-in transform max-w-sm lg:max-w-md">
+    <div className="border rounded bg-gray-100 text-gray-500 text-sm duration-300 ease-in transform w-full mt-2">
       <div className="flex items-center justify-between p-2">
         <div className="flex items-center gap-2">
           {!part.output ? <Loader className="animate-spin" size={16} /> : <Wrench size={16} />}
@@ -51,14 +51,14 @@ export function ToolMessageRender({ part }: { part: ToolUIPart<UITools> }) {
         {expand ? <ChevronUp className="cursor-pointer" size={16} onClick={() => setExpand(false)} /> : <ChevronDown className="cursor-pointer" onClick={() => setExpand(true)} size={16} />}
       </div>
       {expand ? (
-        <div className="border-t px-2 overflow-auto">
-          <span className="font-bold">input:</span>
+        <div className="border-t p-2 overflow-auto">
+          <div className="font-bold">input:</div>
           <pre>
             {JSON.stringify(part.input)}
           </pre>
-          <span className="font-bold">output:</span>
+          <div className="font-bold mt-2">output:</div>
           <pre>
-            {JSON.stringify(part.output)}
+            {JSON.stringify(part.state)}
           </pre>
         </div>
       ) : null}
@@ -69,6 +69,11 @@ export function ToolMessageRender({ part }: { part: ToolUIPart<UITools> }) {
 
 export function ChatMessages(props: ChatMessagesProps) {
   const { messages, isLoading } = props
+
+  if (messages.length) {
+    const parts = messages[messages.length - 1].parts
+    console.log('messages', JSON.stringify(parts[parts.length - 1]))
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 

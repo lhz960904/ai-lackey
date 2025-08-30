@@ -47,8 +47,8 @@ export function ChatInput(props: ChatInputProps) {
       <div className="p-2 flex justify-between">
         <div>
           <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost" size="sm" asChild>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm">
                 <Paperclip />
               </Button>
             </TooltipTrigger>
@@ -57,8 +57,8 @@ export function ChatInput(props: ChatInputProps) {
             </TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger>
-              <Button variant="ghost" size="sm" asChild>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm">
                 <Sparkles />
               </Button>
             </TooltipTrigger>
