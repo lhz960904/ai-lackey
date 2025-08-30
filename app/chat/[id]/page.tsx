@@ -20,7 +20,7 @@ export default async function ChatPage(props: {
     <div className="min-h-screen relative">
       <div className='p-2 flex justify-between items-center'>
         <Link className='cursor-pointer' href='/'>
-          <Image src="/logo-light.png" alt="logo" width={100} height={32} />
+          <Image src="/logo-light.png" alt="logo" width={100} height={32} priority />
         </Link>
         <div>
           <ThemeHandle />

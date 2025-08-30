@@ -111,7 +111,7 @@ export function EditorPanel({ workbenchStore }: EditorPanelProps) {
               workbenchStore.attachTerminal(terminal)
             }}
             onTerminalResize={(cols, rows) => workbenchStore.onTerminalResize(cols, rows)}
-            onTerminalClose={workbenchStore.toggleTerminal}
+            onTerminalClose={() => workbenchStore.toggleTerminal()}
           />
         </ResizablePanel>
       </ResizablePanelGroup>
