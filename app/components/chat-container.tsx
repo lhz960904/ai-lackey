@@ -5,7 +5,6 @@ import { ChatInput } from "./chat-input";
 import { Button } from "./ui/button";
 import { ChatMessages } from "./chat-messages";
 import { useChat } from '@ai-sdk/react';
-import { SUPPORT_MODELS } from "@/core/models";
 import { SelectModel } from "./select-model";
 
 export function ChatContainer() {

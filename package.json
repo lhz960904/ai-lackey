@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:cli": "cd cli && pnpm run dev",
+    "dev:cli": "pnpm --filter @ai-lackey/cli run dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

@@ -7,9 +7,7 @@ import { cn } from "@/app/lib/utils"
 import { Button } from "@/app/components/ui/button"
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/app/components/ui/command"

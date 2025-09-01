@@ -108,7 +108,7 @@ export class FilesStore {
   }
 
   async #init() {
-    const webContainer = await this.#webContainer;
+    // const webContainer = await this.#webContainer;
 
     // webContainer.internal.watchPaths(
     //   { include: [`${WORK_DIR}/**`], exclude: ['**/node_modules', '.git'], includeContent: true },
