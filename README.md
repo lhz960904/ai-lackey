@@ -15,3 +15,11 @@
 ## Tech Stack
 
 ## Quick Start
+
+
+## TODO
+
+### client
+
+- [ ] loopDetector
+- [ ] ideContext

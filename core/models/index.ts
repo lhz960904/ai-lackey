@@ -19,8 +19,8 @@ export const supportModels: Record<string, LanguageModelV2> = {
   'claude-4-sonnet': anthropic('claude-sonnet-4-20250514'),
 }
 
-export function getModel(key: string): LanguageModelV2 | undefined {
-  return supportModels[key]
+export function getModel(key: string): LanguageModelV2 {
+  return supportModels[key] || deepseek("deepseek-chat");
 }
 
 export const SUPPORT_MODELS = Object.keys(supportModels)
