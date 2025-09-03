@@ -13,6 +13,16 @@ export interface ConfigParams {
 }
 
 
+export interface FileFilteringOptions {
+  respectGitIgnore: boolean;
+  respectLackeyIgnore: boolean;
+}
+
+export const DEFAULT_FILE_FILTERING_OPTIONS: FileFilteringOptions = {
+  respectGitIgnore: true,
+  respectLackeyIgnore: true,
+};
+
 export class Config {
   private readonly model: string;
   private readonly sessionId: string;

@@ -3,6 +3,7 @@ import { Config } from "../config/config";
 import { getEnvironmentContext } from "../utils/environment-context";
 
 
+
 export class Client {
   private generateContentConfig: CallSettings = {
     temperature: 0,
