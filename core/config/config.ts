@@ -1,44 +1,30 @@
 import { LanguageModelV2 } from "@ai-sdk/provider";
 import { getModel } from "../models";
-import { WorkspaceContext } from "../utils/workspace-context";
-import { FileDiscoveryService } from "../services/file-discovery";
 import path from "node:path";
+import { FileInfo } from "../utils/get-folder-structure";
 
 export interface ConfigParams {
   model: string
   sessionId: string
   targetDir: string;
-  includeDirectories?: string[];
-  fileDiscoveryService?: FileDiscoveryService
+  files: FileInfo[];
 }
-
-
-export interface FileFilteringOptions {
-  respectGitIgnore: boolean;
-  respectLackeyIgnore: boolean;
-}
-
-export const DEFAULT_FILE_FILTERING_OPTIONS: FileFilteringOptions = {
-  respectGitIgnore: true,
-  respectLackeyIgnore: true,
-};
 
 export class Config {
   private readonly model: string;
   private readonly sessionId: string;
   private readonly targetDir: string;
-  private workspaceContext: WorkspaceContext;
-  private fileDiscoveryService: FileDiscoveryService | null = null;
+  private readonly files: FileInfo[];
 
   constructor(params: ConfigParams) {
     this.sessionId = params.sessionId;
     this.model = params.model;
-    this.fileDiscoveryService = params.fileDiscoveryService ?? null;
     this.targetDir = path.resolve(params.targetDir)
-    this.workspaceContext = new WorkspaceContext(
-      this.targetDir,
-      params.includeDirectories ?? []
-    );
+    this.files = params.files;
+  }
+
+  getAllFiles(): FileInfo[] {
+    return this.files;
   }
 
   getTargetDir(): string {
@@ -51,16 +37,5 @@ export class Config {
 
   getModel(): LanguageModelV2 {
     return getModel(this.model)
-  }
-
-  getWorkspaceContext(): WorkspaceContext {
-    return this.workspaceContext;
-  }
-
-  getFileService(): FileDiscoveryService {
-    if (!this.fileDiscoveryService) {
-      this.fileDiscoveryService = new FileDiscoveryService(this.targetDir);
-    }
-    return this.fileDiscoveryService;
   }
 }

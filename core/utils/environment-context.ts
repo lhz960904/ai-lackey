@@ -8,29 +8,13 @@ import { getFolderStructure } from "./get-folder-structure";
  * @param {Config} config - The runtime configuration and services.
  * @returns {Promise<string>} A promise that resolves to the directory context string.
  */
-export async function getDirectoryContextString(
+export function getDirectoryContextString(
   config: Config,
-): Promise<string> {
-  const workspaceContext = config.getWorkspaceContext();
-  const workspaceDirectories = workspaceContext.getDirectories();
+): string {
 
-  const folderStructures = await Promise.all(
-    workspaceDirectories.map((dir) =>
-      getFolderStructure(dir, {
-        fileService: config.getFileService(),
-      }),
-    ),
-  );
+  const folderStructure = getFolderStructure(config.getTargetDir(), config.getAllFiles())
 
-  const folderStructure = folderStructures.join('\n');
-
-  let workingDirPreamble: string;
-  if (workspaceDirectories.length === 1) {
-    workingDirPreamble = `I'm currently working in the directory: ${workspaceDirectories[0]}`;
-  } else {
-    const dirList = workspaceDirectories.map((dir) => `  - ${dir}`).join('\n');
-    workingDirPreamble = `I'm currently working in the following directories:\n${dirList}`;
-  }
+  const workingDirPreamble = `I'm currently working in the directory: ${config.getTargetDir()}`;
 
   return `${workingDirPreamble}
 Here is the folder structure of the current working directories:
@@ -45,19 +29,17 @@ ${folderStructure}`;
  * @param {Config} config - The runtime configuration and services.
  * @returns A promise that resolves to a UserContent objects containing environment information.
  */
-export async function getEnvironmentContext(config: Config): Promise<TextPart[]> {
+export function getEnvironmentContext(config: Config): TextPart[] {
   const today = new Date().toLocaleDateString(undefined, {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
-  const platform = process.platform;
-  const directoryContext = await getDirectoryContextString(config);
+  const directoryContext = getDirectoryContextString(config);
   const context = `
 This is the Code Assistant. We are setting up the context for our chat.
 Today's date is ${today}.
-My operating system is: ${platform}
 ${directoryContext}
         `.trim();
 

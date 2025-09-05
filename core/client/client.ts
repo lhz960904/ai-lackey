@@ -12,6 +12,7 @@ export class Client {
   private lastPromptId: string;
   private sessionTurnCount = 0;
   private readonly MAX_TURNS = 100;
+  private history: ModelMessage[] = [];
   /**
    * Threshold for compression token count as a fraction of the model's token limit.
    * If the chat history exceeds this threshold, it will be compressed.
@@ -26,11 +27,12 @@ export class Client {
 
   constructor(private config: Config) {
     this.lastPromptId = this.config.getSessionId();
+    this.initialize()
   }
 
-  async initialize() {
-    const envContext = await getEnvironmentContext(this.config);
-    const history: ModelMessage[] = [
+  initialize() {
+    const envContext = getEnvironmentContext(this.config);
+    this.history = [
       {
         role: 'user',
         content: envContext,
@@ -39,10 +41,10 @@ export class Client {
         role: 'assistant',
         content: [{ type: 'text', text: 'Got it. Thanks for the context!' }],
       },
+      // ...history
       // ...(extraHistory ?? []),
     ];
     // userMemory，
-
     // streamText({
     //   model: this.config.getModel(),
     //   system: `you are a code assistant, please help user coding, and you name is haha`,
@@ -51,5 +53,19 @@ export class Client {
     //     // getWeather
     //   },
     // });
+  }
+
+
+  streamText(messages: ModelMessage[]) {
+    return streamText({
+      model: this.config.getModel(),
+      // system: `you are a code assistant, please help user coding`,
+      messages: [
+        ...this.history,
+        ...messages
+      ],
+      tools: {
+      },
+    });
   }
 }
