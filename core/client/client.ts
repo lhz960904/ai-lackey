@@ -1,7 +1,7 @@
 import { CallSettings, ModelMessage, streamText } from "ai";
 import { Config } from "../config/config";
 import { getEnvironmentContext } from "../utils/environment-context";
-
+import { getCoreSystemPrompt } from "../prompts/system";
 
 
 export class Client {
@@ -9,9 +9,6 @@ export class Client {
     temperature: 0,
     topP: 1,
   };
-  private lastPromptId: string;
-  private sessionTurnCount = 0;
-  private readonly MAX_TURNS = 100;
   private history: ModelMessage[] = [];
   /**
    * Threshold for compression token count as a fraction of the model's token limit.
@@ -26,7 +23,6 @@ export class Client {
 
 
   constructor(private config: Config) {
-    this.lastPromptId = this.config.getSessionId();
     this.initialize()
   }
 
@@ -41,31 +37,37 @@ export class Client {
         role: 'assistant',
         content: [{ type: 'text', text: 'Got it. Thanks for the context!' }],
       },
-      // ...history
       // ...(extraHistory ?? []),
     ];
     // userMemory，
-    // streamText({
-    //   model: this.config.getModel(),
-    //   system: `you are a code assistant, please help user coding, and you name is haha`,
-    //   messages: history,
-    //   tools: {
-    //     // getWeather
-    //   },
-    // });
   }
 
+  addHistory(content: ModelMessage) {
+    this.history.push(content)
+  }
 
-  streamText(messages: ModelMessage[]) {
+  getHistory() {
+    return this.history
+  }
+
+  async sendMessageStream(messages: ModelMessage[]) {
+    // TODO try compress chat when token exceed
+
     return streamText({
       model: this.config.getModel(),
-      // system: `you are a code assistant, please help user coding`,
+      system: getCoreSystemPrompt(this.config.getUserMemory()),
       messages: [
         ...this.history,
         ...messages
       ],
       tools: {
       },
+      ...this.generateContentConfig
     });
+  }
+
+
+  async tryCompressChat() {
+
   }
 }

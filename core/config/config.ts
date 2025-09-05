@@ -8,6 +8,7 @@ export interface ConfigParams {
   sessionId: string
   targetDir: string;
   files: FileInfo[];
+  userMemory?: string
 }
 
 export class Config {
@@ -15,12 +16,14 @@ export class Config {
   private readonly sessionId: string;
   private readonly targetDir: string;
   private readonly files: FileInfo[];
+  private userMemory?: string;
 
   constructor(params: ConfigParams) {
     this.sessionId = params.sessionId;
     this.model = params.model;
     this.targetDir = path.resolve(params.targetDir)
     this.files = params.files;
+    this.userMemory = params.userMemory
   }
 
   getAllFiles(): FileInfo[] {
@@ -37,5 +40,9 @@ export class Config {
 
   getModel(): LanguageModelV2 {
     return getModel(this.model)
+  }
+
+  getUserMemory() {
+    return this.userMemory
   }
 }

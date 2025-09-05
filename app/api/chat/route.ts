@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       files: Object.entries(mockFiles).map(item => ({ path: item[0], type: item[1]?.type || 'file' as const }))
     })
     const client = new Client(config)
-    const result = await client.streamText(convertToModelMessages(messages))
+    const result = await client.sendMessageStream(convertToModelMessages(messages))
 
     return result.toUIMessageStreamResponse()
 
